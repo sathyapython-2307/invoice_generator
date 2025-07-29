@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Invoice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-4">
+        <h1 class="mb-4">Create Invoice</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Customer Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {{ customer_form.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ customer_form.name.label(class="form-label") }}
+                                {{ customer_form.name(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ customer_form.email.label(class="form-label") }}
+                                {{ customer_form.email(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ customer_form.address.label(class="form-label") }}
+                                {{ customer_form.address(class="form-control", rows=3) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ customer_form.phone.label(class="form-label") }}
+                                {{ customer_form.phone(class="form-control") }}
+                            </div>
+                            {{ customer_form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Add Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {{ item_form.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ item_form.description.label(class="form-label") }}
+                                {{ item_form.description(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ item_form.quantity.label(class="form-label") }}
+                                {{ item_form.quantity(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ item_form.price.label(class="form-label") }}
+                                {{ item_form.price(class="form-control") }}
+                            </div>
+                            {{ item_form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if items %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Invoice Items</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ "%.2f"|format(item.price) }}</td>
+                            <td>${{ "%.2f"|format(item.quantity * item.price) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-active">
+                            <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
+                            <td><strong>${{ "%.2f"|format(items|sum(attribute='total')) }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <form method="POST">
+                    <input type="hidden" name="generate_invoice" value="1">
+                    <button type="submit" class="btn btn-success">Generate Invoice</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

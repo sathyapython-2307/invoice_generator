@@ -1,0 +1,6 @@
+flask
+flask-sqlalchemy
+flask-wtf
+flask-mail
+reportlab
+python-dotenv
