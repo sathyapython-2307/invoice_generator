@@ -4,3 +4,5 @@ flask-wtf
 flask-mail
 reportlab
 python-dotenv
+
+gunicorn
